@@ -20,9 +20,21 @@ if mot_de_passe != "artisan2026":
 st.title("📊 Tableau de Bord Financier")
 st.markdown("---")
 
-# À REMPLACER par ton vrai lien Google Sheets
-SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ2NWBRr9QH7VIHfPHHwGRXXvQaRhDZ9ecfdm0cxiM-cKRn8tNjBNgX8tXQTVhq4_y0BEEMsabBAnB6/pub?gid=746055985&single=true&output=csv"
+# --- ROUTAGE MULTI-CLIENTS ---
+# 1. On cherche si un paramètre "client" est présent dans l'URL
+client_id = st.query_params.get("client", None)
 
+# 2. Sécurité : Si aucun client n'est précisé dans l'URL
+if not client_id:
+    st.error("⚠️ URL invalide : Aucun identifiant client détecté. Veuillez utiliser votre lien personnalisé.")
+    st.stop()
+
+# 3. Sécurité : On cherche le lien Google Sheets du client dans le coffre-fort Streamlit
+try:
+    SHEET_URL = st.secrets["clients"][client_id]
+except KeyError:
+    st.error(f"⚠️ Accès refusé : L'identifiant '{client_id}' n'est pas reconnu dans notre base.")
+    st.stop()
 @st.cache_data(ttl=60)
 def load_data():
     return pd.read_csv(SHEET_URL)
