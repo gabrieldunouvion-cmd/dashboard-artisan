@@ -119,8 +119,8 @@ try:
         st.metric(label="Sortie de Trésorerie TTC", value=f"{total_ttc:.2f} €")
         
     st.markdown("---")
-    
-  if not donnees_filtrees.empty:
+
+    if not donnees_filtrees.empty:
         # NOUVEAU : Graphique par Catégorie
         st.subheader("🎯 Répartition par Catégorie de dépenses")
         depenses_categorie = donnees_filtrees.groupby("Catégorie")["Montant TTC"].sum().sort_values(ascending=False)
@@ -138,7 +138,6 @@ try:
         def convert_df(df):
             return df.to_csv(index=False).encode('utf-8-sig')
 
-        # On utilise bien donnees_filtrees ici !
         csv_export = convert_df(donnees_filtrees)
 
         st.download_button(
@@ -152,4 +151,5 @@ try:
         st.warning("⚠️ Aucune facture ne correspond à ces critères de recherche.")
 
 except Exception as e:
-    st.error(f"Erreur lors du chargement des données : {e}")
+    st.error(f"Erreur lors du chargement des données : {e}")   
+ 
