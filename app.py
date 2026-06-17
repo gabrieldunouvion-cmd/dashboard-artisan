@@ -120,7 +120,7 @@ try:
         
     st.markdown("---")
     
-    if not donnees_filtrees.empty:
+  if not donnees_filtrees.empty:
         # NOUVEAU : Graphique par Catégorie
         st.subheader("🎯 Répartition par Catégorie de dépenses")
         depenses_categorie = donnees_filtrees.groupby("Catégorie")["Montant TTC"].sum().sort_values(ascending=False)
@@ -129,6 +129,25 @@ try:
         st.subheader("Détail des factures")
         donnees_filtrees['Date'] = donnees_filtrees['Date'].dt.strftime('%d/%m/%Y')
         st.dataframe(donnees_filtrees, use_container_width=True)
+
+        # --- EXPORT DES DONNÉES (COMPTABILITÉ) ---
+        st.markdown("---")
+        st.subheader("📥 Exporter le Bilan")
+
+        @st.cache_data
+        def convert_df(df):
+            return df.to_csv(index=False).encode('utf-8-sig')
+
+        # On utilise bien donnees_filtrees ici !
+        csv_export = convert_df(donnees_filtrees)
+
+        st.download_button(
+            label="Télécharger les données filtrées (Format Excel/CSV)",
+            data=csv_export,
+            file_name="bilan_financier_artisan.csv",
+            mime="text/csv",
+        )
+
     else:
         st.warning("⚠️ Aucune facture ne correspond à ces critères de recherche.")
 
